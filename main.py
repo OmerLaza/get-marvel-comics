@@ -1,25 +1,17 @@
 from marvel.marvel import Marvel
 from keys import private_key, public_key
 import json
-
-base_file_name = 'comics{0}.json'
-
-basic_limit = 100
-starting_offset = 0
-number_to_bring = 200
-
-
-def del_file_content():
-    with open(base_file_name, 'w') as the_file:
-        the_file.write("")
+from tqdm import tqdm
+from conf import *
+from path_utils import prep_data_dir
 
 
 def main():
     m = Marvel(public_key, private_key)
-    del_file_content()
-    for i in xrange(starting_offset, number_to_bring, basic_limit):
-        comics = m.get_comics(limit=basic_limit, offset=i, )
-        with open(base_file_name.format(), 'a') as the_file:
+    prep_data_dir(folder)
+    for idx, current_offset in enumerate(tqdm(xrange(starting_offset, total_number_to_bring, basic_limit))):
+        comics = m.get_comics(limit=basic_limit, offset=current_offset, )
+        with open(base_file_name.format(folder, idx), 'a') as the_file:
             the_file.write(json.dumps(comics.data.to_dict()['results']))
 
 
